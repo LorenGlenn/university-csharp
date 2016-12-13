@@ -104,11 +104,67 @@ namespace University
 				conn.Close();
 			}
     }
+
+    public void AddStudent(Student newStudent)
+     {
+       SqlConnection conn = DB.Connection();
+       conn.Open();
+
+       SqlCommand cmd = new SqlCommand("INSERT INTO courses_students (course_id, student_id) VALUES (@CourseId, @StudentId);", conn);
+
+       SqlParameter courseIdParameter = new SqlParameter();
+       courseIdParameter.ParameterName = "@CourseId";
+       courseIdParameter.Value = this.GetId();
+       cmd.Parameters.Add(courseIdParameter);
+
+       SqlParameter studentIdParameter = new SqlParameter();
+       studentIdParameter.ParameterName = "@StudentId";
+       studentIdParameter.Value = newStudent.GetId();
+       cmd.Parameters.Add(studentIdParameter);
+
+       cmd.ExecuteNonQuery();
+
+       if(conn!= null)
+       {
+         conn.Close();
+       }
+     }
+
+     public List<Student> GetStudents()
+   {
+     SqlConnection conn = DB.Connection();
+     conn.Open();
+
+     SqlCommand cmd = new SqlCommand("SELECT students.* FROM students JOIN courses_students ON (courses_students.student_id = students.id) JOIN courses ON (courses.id = courses_students.course_id) WHERE course_id = @CourseId;", conn);
+     SqlParameter courseIdParameter = new SqlParameter();
+     courseIdParameter.ParameterName = "@CourseId";
+     courseIdParameter.Value = this.GetId();
+     cmd.Parameters.Add(courseIdParameter);
+     SqlDataReader rdr = cmd.ExecuteReader();
+
+     List<Student> allStudents = new List<Student> {};
+     while(rdr.Read())
+     {
+       int studentId = rdr.GetInt32(0);
+       string studentName = rdr.GetString(1);
+       Student newStudent = new Student(studentName, studentId);
+       allStudents.Add(newStudent);
+     }
+     if (rdr != null)
+     {
+       rdr.Close();
+     }
+
+     return allStudents;
+   }
+
+
+
     public static void DeleteAll()
     {
       SqlConnection conn = DB.Connection();
       conn.Open();
-      SqlCommand cmd = new SqlCommand("Delete FROM courses;", conn);
+      SqlCommand cmd = new SqlCommand("Delete FROM courses; DELETE FROM courses_students;", conn);
       cmd.ExecuteNonQuery();
       conn.Close();
     }
