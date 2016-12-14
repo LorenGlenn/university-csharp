@@ -24,6 +24,25 @@ namespace University
 
       Assert.Equal(testList, allStudents);
     }
+    [Fact]
+    public void Test_GetCoursesAssociatedWithStudent()
+    {
+      List<Course> allCourses = new List<Course>{};
+      List<Course> testCourses = new List<Course>{};
+
+      Course newCourse = new Course("Math", "MTH 001");
+      newCourse.Save();
+
+      Student newStudent = new Student("John");
+      newStudent.Save();
+
+      newStudent.AddCourse(newCourse);
+      allCourses = newStudent.GetCourses();
+      testCourses.Add(newCourse);
+
+      Assert.Equal(testCourses, allCourses);
+    }
+
     public void Dispose()
     {
       Student.DeleteAll();

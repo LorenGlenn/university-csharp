@@ -29,10 +29,13 @@ namespace University
     {
       List<Student> allStudents = new List<Student>{};
       List<Student> testStudents = new List<Student>{};
+
       Course newCourse = new Course("Math", "MTH 001");
       newCourse.Save();
+
       Student newStudent = new Student("John");
       newStudent.Save();
+
       newCourse.AddStudent(newStudent);
       allStudents = newCourse.GetStudents();
       testStudents.Add(newStudent);
